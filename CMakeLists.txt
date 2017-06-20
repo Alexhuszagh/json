@@ -2,7 +2,8 @@
 #  :license: MIT, see LICENSE.md for more details.
 
 cmake_minimum_required(VERSION 3.4)
-project(JSON CXX)
+project(json CXX)
+enable_testing()
 
 # FLAGS
 # -----
@@ -22,9 +23,18 @@ if(BUILD_STATIC)
     elseif(MINGW)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
     elseif(MSVC)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /MTd /O0")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Ox")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /O0 /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Ox /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+        set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     endif()
+endif()
+
+# Need to manually set compiler flags for Travis CI
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++14")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 # DEPENDENCIES
@@ -49,31 +59,27 @@ set(SOURCE_FILES
 )
 
 if(BUILD_STATIC)
-    add_library(JSON STATIC ${SOURCE_FILES})
+    add_library(json STATIC ${SOURCE_FILES})
 else()
-    add_library(JSON SHARED ${SOURCE_FILES})
+    add_library(json SHARED ${SOURCE_FILES})
 endif()
-set_target_properties(JSON PROPERTIES OUTPUT_NAME json)
+set(JSON_LIBRARIES json)
 
 # EXAMPLES
 # --------
 
 if(BUILD_EXAMPLES)
-    add_executable(JSONSimpleWriter example/simplewriter.cpp)
-    target_link_libraries(JSONSimpleWriter JSON Lexi)
-    set_target_properties(JSONSimpleWriter PROPERTIES OUTPUT_NAME json_simplewriter)
+    add_executable(json_simplewriter example/simplewriter.cpp)
+    target_link_libraries(json_simplewriter ${JSON_LIBRARIES} Lexi)
 
-    add_executable(JSONSimpleReader example/simplereader.cpp)
-    target_link_libraries(JSONSimpleReader JSON Lexi)
-    set_target_properties(JSONSimpleReader PROPERTIES OUTPUT_NAME json_simplereader)
+    add_executable(json_simplereader example/simplereader.cpp)
+    target_link_libraries(json_simplereader ${JSON_LIBRARIES} Lexi)
 
-    add_executable(JSONRange example/range.cpp)
-    target_link_libraries(JSONRange JSON Lexi)
-    set_target_properties(JSONRange PROPERTIES OUTPUT_NAME json_range)
+    add_executable(json_range example/range.cpp)
+    target_link_libraries(json_range ${JSON_LIBRARIES} Lexi)
 
-    add_executable(JSONStl example/stl.cpp)
-    target_link_libraries(JSONStl JSON Lexi)
-    set_target_properties(JSONStl PROPERTIES OUTPUT_NAME json_stl)
+    add_executable(json_stl example/stl.cpp)
+    target_link_libraries(json_stl ${JSON_LIBRARIES} Lexi)
 endif()
 
 # TESTS
@@ -95,18 +101,25 @@ if(BUILD_TESTS)
     if(NOT TARGET gtest)
         add_subdirectory(googletest)
     endif()
-    add_executable(JSON_TESTS ${TEST_FILES})
-    target_link_libraries(JSON_TESTS
+    add_executable(json_tests ${TEST_FILES})
+    target_link_libraries(json_tests
         gtest
         gtest_main
-        JSON
+        ${JSON_LIBRARIES}
         Lexi
     )
-    set_target_properties(JSON_TESTS PROPERTIES OUTPUT_NAME test)
+    set_target_properties(json_tests PROPERTIES OUTPUT_NAME test)
 
-     add_custom_target(check_json
-        COMMAND $<TARGET_FILE:JSON_TESTS>
-        DEPENDS JSON_TESTS
+    # Need to specify proper exception handling for Windows.
+    if(MSVC)
+        set_target_properties(json_tests PROPERTIES
+            COMPILE_OPTIONS "/EHsc"
+        )
+    endif()
+
+     add_test(NAME json_tests
+        COMMAND json_tests
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 endif()
 
@@ -120,11 +133,9 @@ if(BUILD_FUZZ AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads)
 
-    add_executable(JSONFuzzReader test/fuzz/reader.cpp)
-    target_link_libraries(JSONFuzzReader LLVMFuzzer JSON Lexi Threads::Threads)
-    set_target_properties(JSONFuzzReader PROPERTIES OUTPUT_NAME json_fuzzreader)
+    add_executable(json_fuzzreader test/fuzz/reader.cpp)
+    target_link_libraries(json_fuzzreader LLVMFuzzer ${JSON_LIBRARIES} Lexi Threads::Threads)
 
-    add_executable(JSONFuzzWriter test/fuzz/writer.cpp)
-    target_link_libraries(JSONFuzzWriter LLVMFuzzer JSON Lexi Threads::Threads)
-    set_target_properties(JSONFuzzWriter PROPERTIES OUTPUT_NAME json_fuzzwriter)
+    add_executable(json_fuzzwriter test/fuzz/writer.cpp)
+    target_link_libraries(json_fuzzwriter LLVMFuzzer ${JSON_LIBRARIES} Lexi Threads::Threads)
 endif()

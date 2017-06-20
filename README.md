@@ -4,6 +4,7 @@ Json++
 Json++ is a memory-efficient, dependency-free, lazy C++11 JSON reader and writer.
 
 [![Build Status](https://travis-ci.org/Alexhuszagh/json.svg?branch=master)](https://travis-ci.org/Alexhuszagh/json)
+[![Build Status](https://tea-ci.org/api/badges/Alexhuszagh/json/status.svg)](https://tea-ci.org/Alexhuszagh/json)
 [![Build status](https://ci.appveyor.com/api/projects/status/mds5o52wguleb54b?svg=true)](https://ci.appveyor.com/project/Alexhuszagh/json)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/12985/badge.svg)](https://scan.coverity.com/projects/alexhuszagh-json)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/99332f82456648e08d34ffd688d98e9a)](https://www.codacy.com/app/Alexhuszagh/json?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Alexhuszagh/json&amp;utm_campaign=Badge_Grade)
@@ -71,7 +72,7 @@ git clone https://github.com/Alexhuszagh/json.git
 git submodule update --init
 cd json/build
 cmake .. -_DBUILD_TESTS=ON      # "-DBUILD_FUZZ=ON" for fuzzing with Clang
-make -j 5                       # "msbuild JSON.sln" for MSVC
+make -j 5                       # "msbuild json.sln" for MSVC
 ```
 
 ## Testing
@@ -82,12 +83,11 @@ The core parser has also been extensively fuzzed (see [Fuzz Tests](/test/fuzz)),
 
 ## Portability
 
-Json++ has been tested with the following compilers and operating systems:
+Json++ is continually built with the following compiler and compiler versions:
 
-- 64-bit Linux with Clang 3.8.2
-- 64-bit Linux with GCC 5.4.0
-- 32/64-bit Windows with MinGW 5.3.0 (MXE, MinGW, and MSYS2) 
-//- 32/64-bit Windows with Visual Studio 14 2015
+- Clang 3.8+
+- GCC 5.3+
+- MinGW 5.3.0 (MXE, MinGW, and MSYS2) 
 
 ## Documentation
 

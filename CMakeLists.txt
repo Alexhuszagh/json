@@ -40,7 +40,7 @@ endif()
 # DEPENDENCIES
 # ------------
 
-if(NOT TARGET Lexi)
+if(NOT TARGET lexi)
     add_subdirectory(lexi)
 endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lexi/include")
@@ -70,16 +70,16 @@ set(JSON_LIBRARIES json)
 
 if(BUILD_EXAMPLES)
     add_executable(json_simplewriter example/simplewriter.cpp)
-    target_link_libraries(json_simplewriter ${JSON_LIBRARIES} Lexi)
+    target_link_libraries(json_simplewriter ${JSON_LIBRARIES} lexi)
 
     add_executable(json_simplereader example/simplereader.cpp)
-    target_link_libraries(json_simplereader ${JSON_LIBRARIES} Lexi)
+    target_link_libraries(json_simplereader ${JSON_LIBRARIES} lexi)
 
     add_executable(json_range example/range.cpp)
-    target_link_libraries(json_range ${JSON_LIBRARIES} Lexi)
+    target_link_libraries(json_range ${JSON_LIBRARIES} lexi)
 
     add_executable(json_stl example/stl.cpp)
-    target_link_libraries(json_stl ${JSON_LIBRARIES} Lexi)
+    target_link_libraries(json_stl ${JSON_LIBRARIES} lexi)
 endif()
 
 # TESTS
@@ -101,12 +101,14 @@ if(BUILD_TESTS)
     if(NOT TARGET gtest)
         add_subdirectory(googletest)
     endif()
+    include_directories(googletest/googletest/include)
+
     add_executable(json_tests ${TEST_FILES})
     target_link_libraries(json_tests
         gtest
         gtest_main
         ${JSON_LIBRARIES}
-        Lexi
+        lexi
     )
     set_target_properties(json_tests PROPERTIES OUTPUT_NAME test)
 
@@ -117,7 +119,7 @@ if(BUILD_TESTS)
         )
     endif()
 
-     add_test(NAME json_tests
+    add_test(NAME json_tests
         COMMAND json_tests
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
@@ -134,8 +136,8 @@ if(BUILD_FUZZ AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     find_package(Threads)
 
     add_executable(json_fuzzreader test/fuzz/reader.cpp)
-    target_link_libraries(json_fuzzreader LLVMFuzzer ${JSON_LIBRARIES} Lexi Threads::Threads)
+    target_link_libraries(json_fuzzreader LLVMFuzzer ${JSON_LIBRARIES} lexi Threads::Threads)
 
     add_executable(json_fuzzwriter test/fuzz/writer.cpp)
-    target_link_libraries(json_fuzzwriter LLVMFuzzer ${JSON_LIBRARIES} Lexi Threads::Threads)
+    target_link_libraries(json_fuzzwriter LLVMFuzzer ${JSON_LIBRARIES} lexi Threads::Threads)
 endif()

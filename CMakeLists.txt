@@ -1,6 +1,7 @@
 #  :copyright: (c) 2015-2017 The Regents of the University of California.
 #  :license: MIT, see LICENSE.md for more details.
 
+set(CMAKE_LEGACY_CYGWIN_WIN32 1)
 cmake_minimum_required(VERSION 2.8)
 project(json CXX)
 enable_testing()

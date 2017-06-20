@@ -7,7 +7,7 @@ Json++ is a memory-efficient, dependency-free, lazy C++11 JSON reader and writer
 [![Build status](https://ci.appveyor.com/api/projects/status/mds5o52wguleb54b?svg=true)](https://ci.appveyor.com/project/Alexhuszagh/json)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/12985/badge.svg)](https://scan.coverity.com/projects/alexhuszagh-json)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/99332f82456648e08d34ffd688d98e9a)](https://www.codacy.com/app/Alexhuszagh/json?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Alexhuszagh/json&amp;utm_campaign=Badge_Grade)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nlohmann/json/master/LICENSE.MIT)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Alexhuszagh/json/blob/master/LICENSE.md)
 
 **Table of Contents**
 

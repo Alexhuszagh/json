@@ -69,8 +69,9 @@ Simply clone, configure with CMake, and build.
 
 ```bash
 git clone https://github.com/Alexhuszagh/json.git
-git submodule update --init
-cd json/build
+cd json
+git submodule update --init --recursive
+cd build
 cmake .. -_DBUILD_TESTS=ON      # "-DBUILD_FUZZ=ON" for fuzzing with Clang
 make -j 5                       # "msbuild json.sln" for MSVC
 ```

@@ -15,18 +15,18 @@
 // -----
 
 
-TEST(TextWriter, WriteMap)
-{
-    std::map<int, int> m = {
-        {1, 2},
-        {3, 4},
-        {5, 6},
-    };
-
-    json::StringTextWriter writer;
-    writer.write(m);
-    EXPECT_EQ(writer.str(), "{\"1\":2,\"3\":4,\"5\":6}");
-}
+//TEST(TextWriter, WriteMap)
+//{
+//    std::map<int, int> m = {
+//        {1, 2},
+//        {3, 4},
+//        {5, 6},
+//    };
+//
+//    json::StringTextWriter writer;
+//    writer.write(m);
+//    EXPECT_EQ(writer.str(), "{\"1\":2,\"3\":4,\"5\":6}");
+//}
 
 
 TEST(TextWriter, NodelessInt)

@@ -68,10 +68,9 @@ static std::string toUnicode(const size_t codepoint1,
     size_t codepoint = codepoint1;
 
     // check if codepoint1 is a high surrogate
-    if (codepoint1 >= 0xD800 and codepoint1 <= 0xDBFF)
-    {
+    if (codepoint1 >= 0xD800 && codepoint1 <= 0xDBFF) {
         // check if codepoint2 is a low surrogate
-        if (codepoint2 >= 0xDC00 and codepoint2 <= 0xDFFF) {
+        if (codepoint2 >= 0xDC00 && codepoint2 <= 0xDFFF) {
             // high surrogate occupies the most significant 22 bits
             // low surrogate occupies the least significant 15 bits
             codepoint = (codepoint1 << 10) + codepoint2 - 0x35FDC00;
@@ -120,7 +119,7 @@ static void parseCodepoint(std::istream &stream,
     delete[] data;
 
     // check if codepoint is a high surrogate
-    if (codepoint >= 0xD800 and codepoint <= 0xDBFF) {
+    if (codepoint >= 0xD800 && codepoint <= 0xDBFF) {
         // make sure there is a subsequent unicode
         if (!(consume(stream, '\\') && consume(stream, 'u'))) {
             throw ParserError("Missing low surrogate.");
@@ -134,7 +133,7 @@ static void parseCodepoint(std::istream &stream,
         delete[] data;
         string += toUnicode(codepoint, codepoint2);
 
-    } else if (codepoint >= 0xDC00 and codepoint <= 0xDFFF) {
+    } else if (codepoint >= 0xDC00 && codepoint <= 0xDFFF) {
         // we found a lone low surrogate
         throw ParserError("Missing high surrogate.");
     } else {

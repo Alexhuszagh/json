@@ -97,14 +97,51 @@ public:
     bool endArray();
 
     // WRITERS -- ARRAYS
-    template <typename T, enable_if_t<!is_container_v<T>, T>* = nullptr>
-    void write(const T &t);
-    template <typename T, enable_if_t<!is_container_v<T>, T>* = nullptr>
-    void write(T &&t);
-    template <typename T, enable_if_t<is_container_v<T>, T>* = nullptr>
-    void write(const T &t);
-    template <typename T, enable_if_t<is_container_v<T>, T>* = nullptr>
-    void write(T &&t);
+    template <typename T>
+    void write(const T &t, enable_if_t<!is_container_v<T>, T>* = nullptr)
+    {
+        if (isObject()) {
+            if (intermediate) {
+                writeValue(t);
+            } else {
+                writeKey(t);
+            }
+        } else {
+            writeValueDelimiter();
+            detail::write(*stream, t);
+        }
+    }
+
+    template <typename T>
+    void write(T &&t, enable_if_t<!is_container_v<T>, T>* = nullptr)
+    {
+        if (isObject()) {
+            if (intermediate) {
+                writeValue(std::forward<T>(t));
+            } else {
+                writeKey(std::forward<T>(t));
+            }
+        } else {
+            writeValueDelimiter();
+            detail::write(*stream, std::forward<T>(t));
+        }
+    }
+
+    template <typename T>
+    void write(const T &t, enable_if_t<is_container_v<T>, T>* = nullptr)
+    {
+        JSON_ACCEPTS_VALUE();
+        writeValueDelimiter();
+        detail::write(*stream, t);
+    }
+
+    template <typename T>
+    void write(T &&t, enable_if_t<is_container_v<T>, T>* = nullptr)
+    {
+        JSON_ACCEPTS_VALUE();
+        writeValueDelimiter();
+        detail::write(*stream, std::forward<T>(t));
+    }
 
     // WRITERS -- OBJECTS
     template <typename T, typename U>
@@ -151,76 +188,6 @@ public:
 
 // IMPLEMENTATION
 // --------------
-
-
-/** \brief Write custom value to array.
- */
-template <
-    typename T,
-    enable_if_t<!is_container_v<T>, T>*
->
-void TextWriter::write(const T &t)
-{
-    if (isObject()) {
-        if (intermediate) {
-            writeValue(t);
-        } else {
-            writeKey(t);
-        }
-    } else {
-        writeValueDelimiter();
-        detail::write(*stream, t);
-    }
-}
-
-
-/** \brief Write custom value with perfect forwarding.
- */
-template <
-    typename T,
-    enable_if_t<!is_container_v<T>, T>*
->
-void TextWriter::write(T &&t)
-{
-    if (isObject()) {
-        if (intermediate) {
-            writeValue(std::forward<T>(t));
-        } else {
-            writeKey(std::forward<T>(t));
-        }
-    } else {
-        writeValueDelimiter();
-        detail::write(*stream, std::forward<T>(t));
-    }
-}
-
-
-/** \brief Write custom container.
- */
-template <
-    typename T,
-    enable_if_t<is_container_v<T>, T>*
->
-void TextWriter::write(const T &t)
-{
-    JSON_ACCEPTS_VALUE();
-    writeValueDelimiter();
-    detail::write(*stream, t);
-}
-
-
-/** \brief Write custom container with perfect forwarding.
- */
-template <
-    typename T,
-    enable_if_t<is_container_v<T>, T>*
->
-void TextWriter::write(T &&t)
-{
-    JSON_ACCEPTS_VALUE();
-    writeValueDelimiter();
-    detail::write(*stream, std::forward<T>(t));
-}
 
 
 /** \brief Write custom value to object.

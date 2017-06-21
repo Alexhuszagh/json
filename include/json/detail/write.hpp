@@ -48,6 +48,27 @@ writeKey(std::ostream &stream,
     return stream;
 }
 
+// All **sane** compilers require a forward declaration for
+// the function definition, except for MSVC, which treats
+// it as an ambiguous lookup. Magical, huh?
+#ifndef _MSC_VER
+
+/** \brief Forward-declare array specialization.
+ */
+template <typename T>
+enable_if_t<is_array_v<T>, std::ostream&>
+write(std::ostream &stream,
+    const T &t);
+
+
+/** \brief Forward-declare object specialization.
+ */
+template <typename T>
+enable_if_t<is_object_v<T>, std::ostream&>
+write(std::ostream &stream,
+    const T &t);
+
+#endif              // _MSC_VER
 
 /** \brief Write quoted key from unquoted value.
  */
